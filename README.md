@@ -9,7 +9,7 @@ are always remote.
 
 Use thor as you normally would, but on any thor instance add the following:
 
-		class ThorTest
+		class ThorTest < Thor
 			include Thor::Actions
 			include ThorSsh::Actions
 
