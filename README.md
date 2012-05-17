@@ -19,7 +19,7 @@ Then set a destination server to an Net::SSH connection to make all actions use 
 
 ## Things that don't work yet
 
-This is still a work in progress.  The main issue is that calling inside or anything that depends on it (in_root) does not work yet.  I'll get it working soon though.
+This is still a work in progress.  The main issue is that calling #inside or anything that depends on it (in_root) does not work yet.  I'll get it working soon though.
 
 TODO: Get #inside working
 
