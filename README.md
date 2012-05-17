@@ -4,6 +4,18 @@ ThorSsh takes thor and allows it to run from local to remote.
 It assumes that the sources are always local and the remotes
 are always remote.
 
+## Use
+		gem 'thor-ssh'
+
+Use thor as you normally would, but on any thor instance add the following:
+
+		class ThorTest
+			include Thor::Actions
+			include ThorSsh::Actions
+
+Then set a destination server to make all actions use a different server for the destination.
+
+		self.destination_server = VagrantManager.connect
 
 TODO: Get #inside working
 
