@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["ryanstout@gmail.com"]
   gem.description   = %q{Makes it so you can set a remote destination for thor's actions (via ssh/sftp)}
   gem.summary       = %q{Makes thor work with remote destinations}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/ryanstout/thor-ssh"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
