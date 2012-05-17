@@ -13,9 +13,9 @@ Use thor as you normally would, but on any thor instance add the following:
 			include Thor::Actions
 			include ThorSsh::Actions
 
-Then set a destination server to make all actions use a different server for the destination.
+Then set a destination server to an Net::SSH connection to make all actions use a different server for the destination.
 
-		self.destination_server = VagrantManager.connect
+		self.destination_server = Net::SSH.start(... [ssh connection] ...)
 
 TODO: Get #inside working
 
