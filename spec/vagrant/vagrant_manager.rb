@@ -4,19 +4,26 @@ require 'net/ssh'
 # Return an ssh connection
 class VagrantManager
   def self.connect
-    @vm = Vagrant::Environment.new
-    pk_path = @vm.primary_vm.ssh.info[:private_key_path] || @vm.default_private_key_path
-    keys = [File.expand_path(pk_path, @vm.root_path)]
+    @vm = Vagrant::Environment.new(:cwd => File.dirname(__FILE__)).primary_vm
 
-    host      = @vm.primary_vm.ssh.info[:host]
-    port      = @vm.primary_vm.ssh.info[:port]
-    username  = @vm.primary_vm.ssh.info[:username]
-    
-    puts host
-    puts username
-    puts port
-    puts keys.inspect
-    return Net::SSH.start(host, username, :port => port, :keys => keys)
+    ssh_info = @vm.ssh.info
+
+    # Build the options we'll use to initiate the connection via Net::SSH
+    opts = {
+      :port                  => ssh_info[:port],
+      :keys                  => [ssh_info[:private_key_path]],
+      :keys_only             => true,
+      :user_known_hosts_file => [],
+      :paranoid              => false,
+      :config                => false,
+      :forward_agent         => ssh_info[:forward_agent]
+    }
+
+    # Check that the private key permissions are valid
+    @vm.ssh.check_key_permissions(ssh_info[:private_key_path])
+
+    # Connect to SSH, giving it a few tries
+    return Net::SSH.start(ssh_info[:host], ssh_info[:username], opts)
   end
 end
 

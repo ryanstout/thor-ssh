@@ -17,10 +17,10 @@ describe ThorSsh do
   end
   
   before(:all) do
-    @base_path = '/home/unbutu/thortest'
+    @base_path = '/home/vagrant/thortest'
     
     @thor_test = ThorTest.new
-    @thor_test.destination_server = Net::SSH.start('localhost', 'ubuntu', :port => 2222)
+    @thor_test.destination_server = VagrantManager.connect
     @thor_test.destination_files.rm_rf(@base_path)
     @thor_test.destination_server.close
   end
@@ -54,7 +54,7 @@ describe ThorSsh do
   
   it "should set the mode" do
     @thor_test.create_file("#{@base_path}/modeFile", "More awesome content")
-    mode('modeFile').should == '-rw-rw-r--'
+    mode('modeFile').should == '-rw-r--r--'
     @thor_test.chmod("#{@base_path}/modeFile", 0600)
     mode('modeFile').should == '-rw-------'
   end
