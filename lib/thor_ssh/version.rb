@@ -1,0 +1,3 @@
+module ThorSsh
+  VERSION = "0.0.1"
+end
