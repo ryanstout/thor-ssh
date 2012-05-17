@@ -18,6 +18,9 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'net-sftp', '= 2.0.5'
   gem.add_development_dependency 'rspec', '~> 2.10'
   gem.add_development_dependency 'vagrant', '= 1.0.3'
+  gem.add_development_dependency 'rake', '~> 0.9'
+  gem.add_development_dependency 'rdoc', '~> 3.9'
+  gem.rdoc_options = ['--charset=UTF-8']
   
   gem.version       = ThorSsh::VERSION
 end

@@ -22,6 +22,7 @@ Then set a destination server to an Net::SSH connection to make all actions use 
 This is still a work in progress.  The main issue is that calling #inside or anything that depends on it (in_root) does not work yet.  I'll get it working soon though.
 
 TODO: Get #inside working
+TODO: Add other features needed for provisioning system
 
 ## Running Tests
 The test run through vagrant, which seemed logical since we want to test ssh stuff.
