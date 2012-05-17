@@ -4,8 +4,8 @@ require File.expand_path('../lib/thor_ssh/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Ryan Stout"]
   gem.email         = ["ryanstout@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Makes it so you can set a remote destination for thor's actions (via ssh/sftp)}
+  gem.summary       = %q{Makes thor work with remote destinations}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
