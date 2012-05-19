@@ -1,4 +1,5 @@
 require 'thor-ssh/remote_file'
+require 'thor-ssh/remote_server'
 require 'thor-ssh/actions/empty_directory'
 require 'thor-ssh/actions/create_file'
 require 'thor-ssh/actions/create_link'
@@ -9,13 +10,13 @@ module ThorSsh
   module Actions
     
     # Returns a connection to the destination server for this thor class.
-    def destination_server
-      @destination_server
+    def destination_connection
+      @destination_connection
     end
     
-    # Sets the destination server connection
-    def destination_server=(val)
-      @destination_server = val
+    # Sets the connection to the destination server
+    def destination_connection=(val)
+      @destination_connection = val
     end
     
     # Returns a remote file or File object that can used to query
@@ -23,10 +24,17 @@ module ThorSsh
     # it is assumed to be local and a normal File class is returned
     def destination_files
       if self.destination_server
-        return @destination_files ||= RemoteFile.new(self.destination_server)
+        return @destination_files ||= RemoteFile.new(self.destination_connection)
       else
         return File
       end
+    end
+    
+    # Returns a remote file or File object that can used to query
+    # or change the state of files.  If there is no destination_server
+    # it is assumed to be local and a normal File class is returned
+    def destination_server
+      return @destination_server ||= RemoteServer.new(self.destination_connection)
     end
     
     def inside(dir='', config={}, &block)
@@ -48,7 +56,7 @@ module ThorSsh
 
       unless options[:pretend]
         # config[:capture] ? `#{command}` : system("#{command}")
-        return destination_files.run(command)
+        return destination_server.run(command)
       end
     end
     

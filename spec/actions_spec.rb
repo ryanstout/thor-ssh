@@ -7,22 +7,22 @@ describe ThorSsh do
   before do
     # Setup the test and connect to a test server
     @thor_test = ThorTest.new
-    @thor_test.destination_server = VagrantManager.connect
-    # @thor_test.destination_server = Net::SSH.start('localhost', 'ubuntu', :port => 2222)
+    @thor_test.destination_connection = VagrantManager.connect
   end
   
   after do
     # Close the connection
-    @thor_test.destination_server.close
+    @thor_test.destination_connection.close
   end
   
   before(:all) do
     @base_path = '/home/vagrant/thortest'
     
     @thor_test = ThorTest.new
-    @thor_test.destination_server = VagrantManager.connect
+    @thor_test.destination_connection = VagrantManager.connect
     @thor_test.destination_files.rm_rf(@base_path)
-    @thor_test.destination_server.close
+    @thor_test.destination_connection.close
+    
   end
   
   it 'should create an empty directory' do
@@ -47,13 +47,14 @@ describe ThorSsh do
   end
   
   def mode(path)
-    ls = @thor_test.destination_files.run("ls -lh \"#{@base_path}/#{path}\"")
+    ls = @thor_test.destination_server.run("ls -lh \"#{@base_path}/#{path}\"")
     mode = ls.strip.split(/ /).first.strip
     return mode
   end
   
   it "should set the mode" do
     @thor_test.create_file("#{@base_path}/modeFile", "More awesome content")
+    @thor_test.chmod("#{@base_path}/modeFile", 0644)
     mode('modeFile').should == '-rw-r--r--'
     @thor_test.chmod("#{@base_path}/modeFile", 0600)
     mode('modeFile').should == '-rw-------'
