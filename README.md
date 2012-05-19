@@ -28,10 +28,12 @@ TODO: Make way to copy remote to remote
 ## Running Tests
 The test run through vagrant, which seemed logical since we want to test ssh stuff.
 
-### Install a box
+### Install a box (first time only)
 		cd spec/vagrant
 		vagrant box add ubuntu11 http://timhuegdon.com/vagrant-boxes/ubuntu-11.10.box
 		vagrant init ubuntu11
+
+### Start box
 		vagrant up
 
 ### Run the tests
