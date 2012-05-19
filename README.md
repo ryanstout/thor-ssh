@@ -23,6 +23,7 @@ This is still a work in progress.  The main issue is that calling #inside or any
 
 TODO: Get #inside working
 TODO: Add other features needed for provisioning system
+TODO: Make way to copy remote to remote
 
 ## Running Tests
 The test run through vagrant, which seemed logical since we want to test ssh stuff.
