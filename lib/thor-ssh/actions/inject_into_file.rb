@@ -1,4 +1,4 @@
-require 'thor_ssh/actions/empty_directory'
+require 'thor-ssh/actions/empty_directory'
 
 class Thor
   module Actions

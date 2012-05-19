@@ -1,9 +1,9 @@
-require 'thor_ssh/remote_file'
-require 'thor_ssh/actions/empty_directory'
-require 'thor_ssh/actions/create_file'
-require 'thor_ssh/actions/create_link'
-require 'thor_ssh/actions/file_manipulation'
-require 'thor_ssh/actions/inject_into_file'
+require 'thor-ssh/remote_file'
+require 'thor-ssh/actions/empty_directory'
+require 'thor-ssh/actions/create_file'
+require 'thor-ssh/actions/create_link'
+require 'thor-ssh/actions/file_manipulation'
+require 'thor-ssh/actions/inject_into_file'
 
 module ThorSsh
   module Actions

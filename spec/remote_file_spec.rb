@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'thor_ssh'
+require 'thor-ssh'
 
 describe ThorSsh do
   before do

@@ -1,4 +1,4 @@
-require 'thor_ssh/actions/create_file'
+require 'thor-ssh/actions/create_file'
 
 class Thor
   module Actions

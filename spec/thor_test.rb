@@ -1,5 +1,5 @@
 require 'thor'
-require 'thor_ssh'
+require 'thor-ssh'
 
 
 class ThorTest < Thor
