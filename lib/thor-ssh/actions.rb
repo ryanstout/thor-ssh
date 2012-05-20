@@ -41,6 +41,11 @@ module ThorSsh
       raise "inside is not implemented in thor-ssh, please use full paths"
     end
     
+    # Similar to run, but silent and always executes on the remote server
+    def exec(command)
+      return destination_server.run(command)
+    end
+    
     def run(command, config={})
       return unless behavior == :invoke
 
@@ -56,7 +61,7 @@ module ThorSsh
 
       unless options[:pretend]
         # config[:capture] ? `#{command}` : system("#{command}")
-        return destination_server.run(command)
+        return exec(command)
       end
     end
     
