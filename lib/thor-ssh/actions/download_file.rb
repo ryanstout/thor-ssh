@@ -13,22 +13,14 @@ class Thor
         super(base, destination, config)
       end
       
-      # def exists?
-      #   puts "CHECK EXISTS"
-      #   false
-      # end
-      
       def identical?
         # TODO: find a good way to check if these are identical, then move the file
         # into place depending on user action
         # exists? && @base.destination_files.binread(destination) == render
-
-        puts "CHECK IDENTICAL"
         false
       end
       
       def render
-        puts "RENDER: #{source}"
         @render ||= open(source) {|input| input.binmode.read }
       end
       
