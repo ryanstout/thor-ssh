@@ -98,6 +98,13 @@ describe ThorSsh do
     @thor_test.get('http://nginx.org/download/nginx-1.2.0.tar.gz', '/home/vagrant/nginx-1.2.0.tar.gz')
   end
   
+  it "should run exec with an exit code" do
+    stdout, stderr, exit_code, exit_signal = @thor_test.exec_with_codes('false')
+    exit_code.should == 1
+
+    stdout, stderr, exit_code, exit_signal = @thor_test.exec_with_codes('true')
+    exit_code.should == 0
+  end
 end
 
 

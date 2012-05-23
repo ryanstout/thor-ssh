@@ -9,7 +9,7 @@ module ThorSsh
       @connection = connection
     end
     
-    def run_with_codes
+    def run_with_codes(command)
       stdout_data = ""
       stderr_data = ""
       exit_code = nil
@@ -36,9 +36,9 @@ module ThorSsh
             exit_signal = data.read_long
           end
         end
-        channel.wait
-      end      
-      # connection.loop
+        # channel.wait
+      end
+      connection.loop
 
       return stdout_data, stderr_data, exit_code, exit_signal
     end
