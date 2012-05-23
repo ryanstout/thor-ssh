@@ -20,7 +20,6 @@ module ThorSsh
             abort "FAILED: couldn't execute command (connection.channel.exec)"
           end
           channel.on_data do |ch,data|
-            puts data
             stdout_data += data
           end
 
