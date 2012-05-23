@@ -1,7 +1,26 @@
 require 'net/ssh'
 require 'net/sftp'
+require 'stringio'
 
 module ThorSsh
+  class RemoteFileWriter
+    def initialize(connection, file)
+      @connection = connection
+      @file = file
+      @offset = 0
+    end
+    
+    def write(data)
+      puts "WRITE: #{data.size} @ #{@offset}"
+      # io = StringIO.new(data)
+      @connection.sftp.write!(@file, @offset, data)
+      
+      puts "WROTE1"
+      
+      @offset += data.size
+    end
+  end
+  
   class RemoteFile
     attr_reader :connection
     
@@ -53,13 +72,37 @@ module ThorSsh
     
     # TODO: we should just move this to a more standard thing
     def binwrite(path, data)
-      file = connection.sftp.open!(path, 'wb')
+      # puts "DATA: #{data.size}"
+      # file = connection.sftp.open!(path, 'wb')
+      # 
+      # # Write
+      # connection.sftp.write!(file, 0, data)
+      # 
+      # # Close
+      # connection.sftp.close!(file)
+
+      io = StringIO.new(data)
+      connection.sftp.upload!(io, path)
+    end
+    
+    def file_opened
+      puts "COOL)"
+    end
+    
+    def open(file_name, mode, &block)
+      # Open file
+      file = connection.sftp.open(file_name, 'wb', &method(:file_opened))#, {:chunk_size => 4096})
       
-      # Write
-      connection.sftp.write!(file, 0, data)
+      file_writer = RemoteFileWriter.new(connection, file)
+      
+      yield(file_writer)
       
       # Close
-      connection.sftp.close!(file)
+      connection.sftp.close(file)
+      
+      # , {:chunk_size => 4096}
+      # connection.sftp.file.open(file_name, mode, &block)
+      
     end
     
     def chmod(mode, file_name)

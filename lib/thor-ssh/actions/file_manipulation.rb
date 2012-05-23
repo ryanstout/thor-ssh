@@ -1,3 +1,5 @@
+require 'thor-ssh/actions/download_file'
+
 class Thor
   module Actions
     # TODO: link_file doesn't make since for links into the gem
@@ -8,6 +10,20 @@ class Thor
     # 
     #   create_link destination, source, config
     # end
+    
+    # Modifies #get to download files remotely, removes the ability to
+    # pass a blcok
+    def get(source, *args)
+      config = args.last.is_a?(Hash) ? args.pop : {}
+      destination = args.first
+
+      source = File.expand_path(find_in_source_paths(source.to_s)) unless source =~ /^https?\:\/\//
+      render = open(source) {|input| input.binmode.read }
+
+      destination ||= File.basename(source)
+
+      action DownloadFile.new(self, source, destination, config)
+    end
     
     
     def chmod(path, mode, config={})

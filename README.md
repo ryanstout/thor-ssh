@@ -43,3 +43,8 @@ The test run through vagrant, which seemed logical since we want to test ssh stu
 ### When you're done
 		cd spec/vagrant
 		vagrant halt
+		
+		
+### TODO:
+
+Add upload progress: https://github.com/net-ssh/net-sftp/blob/master/lib/net/sftp/operations/upload.rb

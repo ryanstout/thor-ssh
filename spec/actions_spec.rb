@@ -12,6 +12,7 @@ describe ThorSsh do
   
   after do
     # Close the connection
+    # @thor_test.destination_connection.sftp.session.shutdown!
     @thor_test.destination_connection.close
   end
   
@@ -21,6 +22,7 @@ describe ThorSsh do
     @thor_test = ThorTest.new
     @thor_test.destination_connection = VagrantManager.connect
     @thor_test.destination_files.rm_rf(@base_path)
+    # @thor_test.destination_connection.sftp.session.shutdown!
     @thor_test.destination_connection.close
     
   end
@@ -90,6 +92,10 @@ describe ThorSsh do
     @thor_test.create_link(link_file, file)
     
     @thor_test.destination_files.binread(link_file).should == "Text"
+  end
+  
+  it "should download a file remotely" do
+    @thor_test.get('http://nginx.org/download/nginx-1.2.0.tar.gz', '/home/vagrant/nginx-1.2.0.tar.gz')
   end
   
 end

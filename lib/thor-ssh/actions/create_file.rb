@@ -10,6 +10,7 @@ class Thor
         invoke_with_conflict_check do
           @base.destination_files.mkdir_p(File.dirname(destination))
           @base.destination_files.binwrite(destination, render)
+          # @base.destination_files.open(destination, 'wb') { |f| f.write render }
         end
         given_destination
       end
