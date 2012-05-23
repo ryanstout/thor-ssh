@@ -42,17 +42,11 @@ module ThorSsh
     end
     
     # Similar to run, but silent and always executes on the remote server
-    def exec(command)
-      return destination_server.run(command)
-    end
-
-    # Similar to run, but silent and always executes on the remote server
-    # Also returns the stderr, exit_code, and exit_signal seperate
-    def exec_with_codes(command)
-      return destination_server.run_with_codes(command)
+    def exec(command, with_codes=false)
+      return destination_server.run(command, with_codes)
     end
     
-    def run(command, config={})
+    def run(command, with_codes=false, config={})
       return unless behavior == :invoke
 
       destination = relative_to_original_destination_root(destination_root, false)
@@ -67,7 +61,7 @@ module ThorSsh
 
       unless options[:pretend]
         # config[:capture] ? `#{command}` : system("#{command}")
-        return exec(command)
+        return exec(command, with_codes)
       end
     end
     

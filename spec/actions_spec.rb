@@ -99,10 +99,10 @@ describe ThorSsh do
   end
   
   it "should run exec with an exit code" do
-    stdout, stderr, exit_code, exit_signal = @thor_test.exec_with_codes('false')
+    stdout, stderr, exit_code, exit_signal = @thor_test.exec('false', true)
     exit_code.should == 1
 
-    stdout, stderr, exit_code, exit_signal = @thor_test.exec_with_codes('true')
+    stdout, stderr, exit_code, exit_signal = @thor_test.exec('true', true)
     exit_code.should == 0
   end
 end

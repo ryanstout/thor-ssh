@@ -42,8 +42,12 @@ module ThorSsh
       return stdout_data, stderr_data, exit_code, exit_signal
     end
 
-    def run(command)
-      return connection.exec!(command)
+    def run(command, with_codes=false)
+      if with_codes
+        return run_with_codes(command)
+      else
+        return connection.exec!(command)
+      end
     end
     
   end
