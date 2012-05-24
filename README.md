@@ -24,14 +24,19 @@ This is still a work in progress.  The main issue is that calling #inside or any
 TODO: Get #inside working
 TODO: Add other features needed for provisioning system
 TODO: Make way to copy remote to remote
+TODO: Make local #run and #exec work
 
 ## Running Tests
 The test run through vagrant, which seemed logical since we want to test ssh stuff.
 
 ### Install a box (first time only)
 		cd spec/vagrant
-		vagrant box add ubuntu11 http://timhuegdon.com/vagrant-boxes/ubuntu-11.10.box
-		vagrant init ubuntu11
+		bundle exec vagrant box add ubuntu11 http://timhuegdon.com/vagrant-boxes/ubuntu-11.10.box
+		bundle exec vagrant init ubuntu11
+		
+		# enable the sandbox and create a commit we can rollback to
+		bundle exec vagrant sandbox on
+		bundle exec vagrant sandbox commit
 
 ### Start box
 		vagrant up
