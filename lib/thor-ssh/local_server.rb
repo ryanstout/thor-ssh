@@ -16,7 +16,7 @@ module ThorSsh
         stderr_data = stderr.read.strip
       end
 
-      exit_code = status.to_i
+      exit_code = status.exitstatus
 
       return stdout_data, stderr_data, exit_code, exit_signal
     end
