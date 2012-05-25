@@ -85,10 +85,6 @@ module ThorSsh
       connection.sftp.upload!(io, path)
     end
     
-    def file_opened
-      puts "COOL)"
-    end
-    
     def open(file_name, mode, &block)
       # Open file
       file = connection.sftp.open(file_name, 'wb', &method(:file_opened))#, {:chunk_size => 4096})

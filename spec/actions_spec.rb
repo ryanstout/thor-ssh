@@ -1,108 +1,149 @@
 require 'spec_helper'
 require 'thor_test'
 require 'vagrant/vagrant_manager'
+require 'fileutils'
 
 
 describe ThorSsh do
   before do
     # Setup the test and connect to a test server
-    @thor_test = ThorTest.new
-    @thor_test.destination_connection = VagrantManager.connect
+    @remote_test = ThorTest.new
+    @remote_test.destination_connection = VagrantManager.connect
+    
+    @local_test = ThorTest.new
+    @local_test.destination_root = File.join(File.dirname(__FILE__), '/tmp/')
   end
   
   after do
     # Close the connection
-    # @thor_test.destination_connection.sftp.session.shutdown!
-    @thor_test.destination_connection.close
+    @remote_test.destination_connection.close
+    
+    # Clear local tmp dir
+    FileUtils.rm_rf(File.join(File.dirname(__FILE__), '/tmp/test/'))
   end
   
   before(:all) do
-    @base_path = '/home/vagrant/thortest'
+    @remote_base_path = '/home/vagrant/thortest'
+    @local_base_path = File.join(File.dirname(__FILE__), '/tmp/test/')
     
-    @thor_test = ThorTest.new
-    @thor_test.destination_connection = VagrantManager.connect
-    @thor_test.destination_files.rm_rf(@base_path)
-    # @thor_test.destination_connection.sftp.session.shutdown!
-    @thor_test.destination_connection.close
+    @remote_test = ThorTest.new
+    @remote_test.destination_connection = VagrantManager.connect
+    @remote_test.destination_files.rm_rf(@remote_base_path)
+    @remote_test.destination_connection.close
     
   end
   
-  it 'should create an empty directory' do
-    @thor_test.empty_directory(@base_path)
-    @thor_test.destination_files.exists?(@base_path)
+  it 'should create an empty directory remotely' do
+    @remote_test.empty_directory(@remote_base_path)
+    @remote_test.destination_files.exists?(@remote_base_path)
+  end
+
+  it 'should create an empty directory locally' do
+    @local_test.empty_directory(@local_base_path)
+    @local_test.destination_files.exists?(@local_base_path)
   end
   
-  it 'should create an empty directory' do
-    @thor_test.get('http://www.google.com/', "#{@base_path}/google.txt")
-    @thor_test.destination_files.binread("#{@base_path}/google.txt").should match(/Google/)
+  it 'should create get a url remotely' do
+    @remote_test.get('http://www.google.com/', "#{@remote_base_path}/google.txt")
+    @remote_test.destination_files.binread("#{@remote_base_path}/google.txt").should match(/Google/)
+  end
+
+  it 'should create get a url locally' do
+    @local_test.get('http://www.google.com/', "#{@local_base_path}/google.txt")
+    @local_test.destination_files.binread("#{@local_base_path}/google.txt").should match(/Google/)
   end
   
-  it 'should create a file and set the text' do
-    @thor_test.create_file("#{@base_path}/createdFile", "More awesome content\nSecond Line of content")
-    @thor_test.destination_files.binread("#{@base_path}/createdFile").should == "More awesome content\nSecond Line of content"
+  it 'should create a file and set the text remotely' do
+    @remote_test.create_file("#{@remote_base_path}/createdFile", "More awesome content\nSecond Line of content")
+    @remote_test.destination_files.binread("#{@remote_base_path}/createdFile").should == "More awesome content\nSecond Line of content"
+  end
+
+  it 'should create a file and set the text locally' do
+    @local_test.create_file("#{@local_base_path}/createdFile", "More awesome content\nSecond Line of content")
+    @local_test.destination_files.binread("#{@local_base_path}/createdFile").should == "More awesome content\nSecond Line of content"
   end
   
-  it "should copy in text" do
-    @thor_test.destination_root = @base_path + "/"
-    @thor_test.template "templates/test_template.rb.tt"
-    @thor_test.destination_files.binread("#{@base_path}/templates/test_template.rb").should match(/Test Ruby File/)
+  it "should copy in text remotely" do
+    @remote_test.destination_root = @remote_base_path + "/"
+    @remote_test.template "templates/test_template.rb.tt"
+    @remote_test.destination_files.binread("#{@remote_base_path}/templates/test_template.rb").should match(/Test Ruby File/)
+  end
+
+  it "should copy in text locally" do
+    @local_test.destination_root = @local_base_path + "/"
+    @local_test.template "templates/test_template.rb.tt"
+    @local_test.destination_files.binread("#{@local_base_path}/templates/test_template.rb").should match(/Test Ruby File/)
   end
   
-  def mode(path)
-    ls = @thor_test.destination_server.run("ls -lh \"#{@base_path}/#{path}\"")
+  def remote_mode(path)
+    ls = @remote_test.destination_server.run("ls -lh \"#{@remote_base_path}/#{path}\"")
     mode = ls.strip.split(/ /).first.strip
     return mode
   end
   
-  it "should set the mode" do
-    @thor_test.create_file("#{@base_path}/modeFile", "More awesome content")
-    @thor_test.chmod("#{@base_path}/modeFile", 0644)
-    mode('modeFile').should == '-rw-r--r--'
-    @thor_test.chmod("#{@base_path}/modeFile", 0600)
-    mode('modeFile').should == '-rw-------'
+  it "should set the mode remotely" do
+    @remote_test.create_file("#{@remote_base_path}/modeFile", "More awesome content")
+    @remote_test.chmod("#{@remote_base_path}/modeFile", 0644)
+    remote_mode('modeFile').should == '-rw-r--r--'
+    @remote_test.chmod("#{@remote_base_path}/modeFile", 0600)
+    remote_mode('modeFile').should == '-rw-------'
+  end
+
+  def local_mode(path)
+    ls = @local_test.destination_server.run("ls -lh \"#{@local_base_path}/#{path}\"")
+    mode = ls.strip.split(/ /).first.strip
+    return mode
+  end
+
+  it "should set the mode locally" do
+    @local_test.create_file("#{@local_base_path}/modeFile", "More awesome content")
+    @local_test.chmod("#{@local_base_path}/modeFile", 0644)
+    local_mode('modeFile').should == '-rw-r--r--'
+    @local_test.chmod("#{@local_base_path}/modeFile", 0600)
+    local_mode('modeFile').should == '-rw-------'
   end
   
   it "should gsub files" do
-    file = "#{@base_path}/gsubFile"
-    @thor_test.create_file(file, "More awesome content")
-    @thor_test.gsub_file file, /awesome/, 'cool'
-    @thor_test.destination_files.binread(file).should == 'More cool content'
+    file = "#{@remote_base_path}/gsubFile"
+    @remote_test.create_file(file, "More awesome content")
+    @remote_test.gsub_file file, /awesome/, 'cool'
+    @remote_test.destination_files.binread(file).should == 'More cool content'
   end
   
   it "should remove files" do
-    file = "#{@base_path}/removeFile"
-    @thor_test.create_file(file, "More awesome content")
-    @thor_test.destination_files.exists?(file).should == true
-    @thor_test.remove_file(file)
-    @thor_test.destination_files.exists?(file).should == false    
+    file = "#{@remote_base_path}/removeFile"
+    @remote_test.create_file(file, "More awesome content")
+    @remote_test.destination_files.exists?(file).should == true
+    @remote_test.remove_file(file)
+    @remote_test.destination_files.exists?(file).should == false    
   end
   
   it "should inject text into files" do
-    file = "#{@base_path}/injectFile"
-    @thor_test.create_file(file, "First line\nSecond Line\nThird Line")
-    @thor_test.insert_into_file(file, "2.5 line\n", :after => "Second Line\n")
-    @thor_test.destination_files.binread(file).should == "First line\nSecond Line\n2.5 line\nThird Line"
+    file = "#{@remote_base_path}/injectFile"
+    @remote_test.create_file(file, "First line\nSecond Line\nThird Line")
+    @remote_test.insert_into_file(file, "2.5 line\n", :after => "Second Line\n")
+    @remote_test.destination_files.binread(file).should == "First line\nSecond Line\n2.5 line\nThird Line"
   end
   
   it "should create links" do
-    file = "#{@base_path}/symFile"
-    link_file = "#{@base_path}/linkedFile"
-    @thor_test.create_file(file, "Text")
+    file = "#{@remote_base_path}/symFile"
+    link_file = "#{@remote_base_path}/linkedFile"
+    @remote_test.create_file(file, "Text")
     
-    @thor_test.create_link(link_file, file)
+    @remote_test.create_link(link_file, file)
     
-    @thor_test.destination_files.binread(link_file).should == "Text"
+    @remote_test.destination_files.binread(link_file).should == "Text"
   end
   
   it "should download a file remotely" do
-    @thor_test.get('http://nginx.org/download/nginx-1.2.0.tar.gz', '/home/vagrant/nginx-1.2.0.tar.gz')
+    @remote_test.get('http://nginx.org/download/nginx-1.2.0.tar.gz', '/home/vagrant/nginx-1.2.0.tar.gz')
   end
   
   it "should run exec with an exit code" do
-    stdout, stderr, exit_code, exit_signal = @thor_test.exec('false', true)
+    stdout, stderr, exit_code, exit_signal = @remote_test.exec('false', true)
     exit_code.should == 1
-
-    stdout, stderr, exit_code, exit_signal = @thor_test.exec('true', true)
+  
+    stdout, stderr, exit_code, exit_signal = @remote_test.exec('true', true)
     exit_code.should == 0
   end
 end

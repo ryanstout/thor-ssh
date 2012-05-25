@@ -1,3 +1,5 @@
+require 'thor-ssh/local_file'
+require 'thor-ssh/local_server'
 require 'thor-ssh/remote_file'
 require 'thor-ssh/remote_server'
 require 'thor-ssh/actions/empty_directory'
@@ -23,18 +25,22 @@ module ThorSsh
     # or change the state of files.  If there is no destination_server
     # it is assumed to be local and a normal File class is returned
     def destination_files
-      if self.destination_server
+      if self.destination_connection
         return @destination_files ||= RemoteFile.new(self.destination_connection)
       else
-        return File
+        return @destination_files ||= LocalFile.new
       end
     end
     
-    # Returns a remote file or File object that can used to query
-    # or change the state of files.  If there is no destination_server
-    # it is assumed to be local and a normal File class is returned
+    # Returns a RemoteServer instance or a LocalServer instance.
+    # Makes it so calls to run events can be called the same reguardless of 
+    # the destination.
     def destination_server
-      return @destination_server ||= RemoteServer.new(self.destination_connection)
+      if self.destination_connection
+        return @destination_server ||= RemoteServer.new(self.destination_connection)
+      else
+        return @destination_server ||= LocalServer.new
+      end
     end
     
     def inside(dir='', config={}, &block)
