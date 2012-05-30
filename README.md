@@ -18,7 +18,7 @@ Use thor as you normally would, but on any thor instance add the following:
 
 Then set a destination server to an Net::SSH connection to make all actions use a different server for the destination.
 
-		self.destination_server = Net::SSH.start(... [ssh connection] ...)
+		self.destination_connection = Net::SSH.start(... [ssh connection] ...)
 
 ## Things that don't work yet
 
