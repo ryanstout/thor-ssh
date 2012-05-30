@@ -4,20 +4,15 @@ require 'vagrant/vagrant_manager'
 require 'fileutils'
 
 
-describe ThorSsh do
+describe "Thor SSH" do
   before do
     # Setup the test and connect to a test server
-    @remote_test = ThorTest.new
-    @remote_test.destination_connection = VagrantManager.connect
-    
+    # @remote_test = ThorTest.new
     @local_test = ThorTest.new
     @local_test.destination_root = File.join(File.dirname(__FILE__), '/tmp/')
   end
   
   after do
-    # Close the connection
-    @remote_test.destination_connection.close
-    
     # Clear local tmp dir
     FileUtils.rm_rf(File.join(File.dirname(__FILE__), '/tmp/test/'))
   end
@@ -29,12 +24,17 @@ describe ThorSsh do
     @remote_test = ThorTest.new
     @remote_test.destination_connection = VagrantManager.connect
     @remote_test.destination_files.rm_rf(@remote_base_path)
-    @remote_test.destination_connection.close
-    
   end
+  
+  after(:all) do
+    # Close the remote connection
+    @remote_test.destination_connection.close
+  end
+
   
   it 'should create an empty directory remotely' do
     @remote_test.empty_directory(@remote_base_path)
+    @remote_test.empty_directory(@remote_base_path + '2')
     @remote_test.destination_files.exists?(@remote_base_path)
   end
   
@@ -181,6 +181,16 @@ describe ThorSsh do
   
     stdout, stderr, exit_code, exit_signal = @local_test.exec('true', true)
     exit_code.should == 0
+  end
+  
+  it "should switch users" do
+    @remote_test.as_user('root') do
+      @remote_test.exec('whoami').strip.should == 'root'
+    end
+  
+    @remote_test.as_root do
+      @remote_test.exec('whoami').strip.should == 'root'
+    end
   end
 end
 

@@ -11,14 +11,23 @@ module ThorSsh
       @base = base
       @connection = connection
     end
+
+    # This is a workaround for bug:
+    # https://github.com/net-ssh/net-sftp/issues/13
+    def close_sftp!
+      connection.sftp.close_channel()
+      connection.instance_variable_set('@sftp', nil)
+    end
     
     def exists?(path)
       begin
-        connection.sftp.stat!(path)
+        res = connection.sftp.stat!(path)
       rescue Net::SFTP::StatusException
+        close_sftp!
         return false
       end
       
+      close_sftp!
       return true
     end
     
@@ -52,10 +61,11 @@ module ThorSsh
         connection.sftp.file.open(path, "rb") do |f|
           data = f.read
         end
+        close_sftp!
       else
         # We just run this as root, when reading we don't need to go back
         # down to the user
-        data = @remote_test.destination_server.run("cat \"#{path}\"")
+        data = @base.destination_server.run("cat \"#{path}\"")
       end
 
       return data
@@ -65,6 +75,7 @@ module ThorSsh
     def binwrite(path, data)
       io = StringIO.new(data)
       connection.sftp.upload!(io, path)
+      close_sftp!
     end
     
     def chmod(mode, file_name)

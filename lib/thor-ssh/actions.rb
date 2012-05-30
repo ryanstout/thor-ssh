@@ -60,6 +60,12 @@ module ThorSsh
       @run_as_user = old_run_as_user
     end
     
+    def as_root(options={})
+      as_user('root', options) do
+        yield
+      end
+    end
+    
     # The user commands should be run as as the moment
     def run_as_user
       @run_as_user

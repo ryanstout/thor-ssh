@@ -1,5 +1,5 @@
 require 'net/ssh'
-require 'net/sftp'
+# require 'net/sftp'
 
 module ThorSsh
   class RemoteServer
@@ -16,8 +16,8 @@ module ThorSsh
       stderr_data = ""
       exit_code = nil
       exit_signal = nil
-      connection.open_channel do |channel|
-        channel.exec(command) do |ch, success|
+      channel = connection.open_channel do |cha|
+        cha.exec(command) do |ch, success|
           unless success
             abort "FAILED: couldn't execute command (connection.channel.exec)"
           end
@@ -36,8 +36,15 @@ module ThorSsh
           channel.on_request("exit-signal") do |ch, data|
             exit_signal = data.read_long
           end
+          
+          # channel.on_close do |ch|
+          #   puts "Channel is Closing! #{connection.closed?}"
+          #   channel.close
+          # end
         end
         # channel.wait
+        # puts "Done Loop"
+        # channel.close
       end
       connection.loop
 

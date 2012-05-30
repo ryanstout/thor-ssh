@@ -27,6 +27,7 @@ class VagrantManager
     # Connect to SSH, giving it a few tries
     return Net::SSH.start(ssh_info[:host], ssh_info[:username], opts)
     
+    
     # return Net::SSH.start("127.0.0.1", "vagrant", {:port=>2222, :keys=>["/Users/ryanstout/.vagrant.d/insecure_private_key"], :keys_only=>true, :user_known_hosts_file=>[], :paranoid=>false, :config=>false, :forward_agent=>false, :verbose=>:debug, :timeout=>1})
   end
 end
