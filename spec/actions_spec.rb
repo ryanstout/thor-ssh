@@ -182,7 +182,6 @@ describe ThorSsh do
     stdout, stderr, exit_code, exit_signal = @local_test.exec('true', true)
     exit_code.should == 0
   end
-
 end
 
 

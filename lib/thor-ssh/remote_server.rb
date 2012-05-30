@@ -4,8 +4,10 @@ require 'net/sftp'
 module ThorSsh
   class RemoteServer
     attr_reader :connection
+    attr_reader :base
     
-    def initialize(connection)
+    def initialize(base, connection)
+      @base = base
       @connection = connection
     end
     
@@ -41,12 +43,29 @@ module ThorSsh
 
       return stdout_data, stderr_data, exit_code, exit_signal
     end
+    
+    def running_as_current_user?
+      base.run_as_user && connection.options[:user] != base.run_as_user
+    end
 
     def run(command, with_codes=false)
+      if running_as_current_user?
+        # We need to change to a different user
+        if base.run_as_user == 'root'
+         # We need to go up to root
+         command = "sudo #{command}"
+       else
+         # We need to go up to root, then down to this user
+         # This involves running sudo (to go up to root), then running
+         # sudo again as the new user, then running the command
+         command = "sudo sudo -u #{base.run_as_user} #{command}"
+        end
+      end
+      results = run_with_codes(command)
       if with_codes
-        return run_with_codes(command)
+        return results
       else
-        return connection.exec!(command)
+        return results.first
       end
     end
     

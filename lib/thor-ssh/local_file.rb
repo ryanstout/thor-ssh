@@ -2,6 +2,12 @@ require 'fileutils'
 
 module ThorSsh
   class LocalFile
+    attr_reader :base
+    
+    def initialize(base)
+      @base = base
+    end
+    
     def exists?(path)
       File.exists?(path)
     end

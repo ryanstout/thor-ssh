@@ -26,9 +26,9 @@ module ThorSsh
     # it is assumed to be local and a normal File class is returned
     def destination_files
       if self.destination_connection
-        return @destination_files ||= RemoteFile.new(self.destination_connection)
+        return @destination_files ||= RemoteFile.new(self, self.destination_connection)
       else
-        return @destination_files ||= LocalFile.new
+        return @destination_files ||= LocalFile.new(self)
       end
     end
     
@@ -37,10 +37,32 @@ module ThorSsh
     # the destination.
     def destination_server
       if self.destination_connection
-        return @destination_server ||= RemoteServer.new(self.destination_connection)
+        return @destination_server ||= RemoteServer.new(self, self.destination_connection)
       else
-        return @destination_server ||= LocalServer.new
+        return @destination_server ||= LocalServer.new(self)
       end
+    end
+    
+    
+    # As user takes a block and runs the code inside the block as the
+    # specified user.  All actions are run as the user
+    #
+    # === Parameters
+    # username<String>:: Who to run as
+    # options<String>:: A hash of options for how to get to this user
+    #
+    # === Options
+    # :shell  - Boolean, should this be invoked in the shell for the user 
+    def as_user(username, options={})
+      old_run_as_user = @run_as_user
+      @run_as_user = username
+      yield
+      @run_as_user = old_run_as_user
+    end
+    
+    # The user commands should be run as as the moment
+    def run_as_user
+      @run_as_user
     end
     
     def inside(dir='', config={}, &block)

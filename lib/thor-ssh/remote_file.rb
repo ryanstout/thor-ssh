@@ -2,29 +2,13 @@ require 'net/ssh'
 require 'net/sftp'
 require 'stringio'
 
-module ThorSsh
-  class RemoteFileWriter
-    def initialize(connection, file)
-      @connection = connection
-      @file = file
-      @offset = 0
-    end
-    
-    def write(data)
-      puts "WRITE: #{data.size} @ #{@offset}"
-      # io = StringIO.new(data)
-      @connection.sftp.write!(@file, @offset, data)
-      
-      puts "WROTE1"
-      
-      @offset += data.size
-    end
-  end
-  
+module ThorSsh  
   class RemoteFile
     attr_reader :connection
+    attr_reader :base
     
-    def initialize(connection)
+    def initialize(base, connection)
+      @base = base
       @connection = connection
     end
     
@@ -39,7 +23,7 @@ module ThorSsh
     end
     
     def run(command)
-      return connection.exec!(command)
+      return base.exec(command)
     end
     
     # Creates the directory at the path on the remote server
@@ -62,43 +46,25 @@ module ThorSsh
     end
     
     def binread(path)
-      data = nil
-      connection.sftp.file.open(path, "rb") do |f|
-        data = f.read
+      # If we first logged in as the running user
+      if base.destination_server.running_as_current_user?
+        data = nil
+        connection.sftp.file.open(path, "rb") do |f|
+          data = f.read
+        end
+      else
+        # We just run this as root, when reading we don't need to go back
+        # down to the user
+        data = @remote_test.destination_server.run("cat \"#{path}\"")
       end
-      
+
       return data
     end
     
     # TODO: we should just move this to a more standard thing
     def binwrite(path, data)
-      # puts "DATA: #{data.size}"
-      # file = connection.sftp.open!(path, 'wb')
-      # 
-      # # Write
-      # connection.sftp.write!(file, 0, data)
-      # 
-      # # Close
-      # connection.sftp.close!(file)
-
       io = StringIO.new(data)
       connection.sftp.upload!(io, path)
-    end
-    
-    def open(file_name, mode, &block)
-      # Open file
-      file = connection.sftp.open(file_name, 'wb', &method(:file_opened))#, {:chunk_size => 4096})
-      
-      file_writer = RemoteFileWriter.new(connection, file)
-      
-      yield(file_writer)
-      
-      # Close
-      connection.sftp.close(file)
-      
-      # , {:chunk_size => 4096}
-      # connection.sftp.file.open(file_name, mode, &block)
-      
     end
     
     def chmod(mode, file_name)

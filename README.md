@@ -4,6 +4,9 @@ ThorSsh takes thor and allows it to run from local to remote.
 It assumes that the sources are always local and the remotes
 are always remote.
 
+## ThorSsh Assumptions
+For running as_user('other_user') the assumption is that your connection is logged in either as 1) root, or 2) a user who can sudo to root
+
 ## Use
 		gem 'thor-ssh'
 
@@ -24,7 +27,7 @@ This is still a work in progress.  The main issue is that calling #inside or any
 TODO: Get #inside working
 TODO: Add other features needed for provisioning system
 TODO: Make way to copy remote to remote
-TODO: Make local #run and #exec work
+TODO: Update method blacklist
 
 ## Running Tests
 The test run through vagrant, which seemed logical since we want to test ssh stuff.

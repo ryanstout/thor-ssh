@@ -2,6 +2,12 @@ require 'popen4'
 
 module ThorSsh
   class LocalServer
+    attr_reader :base
+    
+    def initialize(base)
+      @base = base
+    end
+    
     def run_with_codes(command)
       # pid, stdin, stdout, stderr = Open4::popen4(command)
       # ignored, status = Process::waitpid2 pid
