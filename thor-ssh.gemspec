@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "thor-ssh"
   gem.require_paths = ["lib"]
-  gem.add_runtime_dependency 'thor', '~> 0.15.2'
+  gem.add_runtime_dependency 'thor', '>= 0.14.6'
   gem.add_runtime_dependency 'net-ssh'#, '= 2.2.2'
   gem.add_runtime_dependency 'net-sftp'#, '= 2.0.5'
   gem.add_runtime_dependency 'popen4', '~> 0.1.2'
