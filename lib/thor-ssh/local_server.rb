@@ -22,7 +22,7 @@ module ThorSsh
         stderr_data = stderr.read.strip
       end
 
-      exit_code = status.exitstatus
+      exit_code = status ? status.exitstatus : 0
 
       return stdout_data, stderr_data, exit_code, exit_signal
     end
