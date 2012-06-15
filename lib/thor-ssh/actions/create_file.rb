@@ -1,6 +1,10 @@
 # Extend create file to work over ssh
 class Thor
   module Actions
+    def read_file(path)
+      destination_files.binread(path)
+    end
+    
     class CreateFile
       def identical?
         exists? && @base.destination_files.binread(destination) == render
