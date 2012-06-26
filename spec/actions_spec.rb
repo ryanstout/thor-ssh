@@ -168,18 +168,18 @@ describe "Thor SSH" do
   end
   
   it "should run exec with an exit code remotely" do
-    stdout, stderr, exit_code, exit_signal = @remote_test.exec('false', true)
+    stdout, stderr, exit_code, exit_signal = @remote_test.exec('false', :with_codes => true)
     exit_code.should == 1
   
-    stdout, stderr, exit_code, exit_signal = @remote_test.exec('true', true)
+    stdout, stderr, exit_code, exit_signal = @remote_test.exec('true', :with_codes => true)
     exit_code.should == 0
   end
   
   it "should run exec with an exit code locally" do
-    stdout, stderr, exit_code, exit_signal = @local_test.exec('false', true)
+    stdout, stderr, exit_code, exit_signal = @local_test.exec('false', :with_codes => true)
     exit_code.should == 1
   
-    stdout, stderr, exit_code, exit_signal = @local_test.exec('true', true)
+    stdout, stderr, exit_code, exit_signal = @local_test.exec('true', :with_codes => true)
     exit_code.should == 0
   end
   

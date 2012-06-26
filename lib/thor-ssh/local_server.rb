@@ -8,6 +8,8 @@ module ThorSsh
       @base = base
     end
     
+    # TODO: This should inherit from the same thing as RemoteServer and
+    # it should have the same run but different run_with_codes
     def run_with_codes(command)
       # pid, stdin, stdout, stderr = Open4::popen4(command)
       # ignored, status = Process::waitpid2 pid
@@ -27,8 +29,8 @@ module ThorSsh
       return stdout_data, stderr_data, exit_code, exit_signal
     end
 
-    def run(command, with_codes=false)
-      if with_codes
+    def run(command, options={})
+      if options[:with_codes]
         return run_with_codes(command)
       else
         stdout, stdin, exit_code, exit_signal = run_with_codes(command)
