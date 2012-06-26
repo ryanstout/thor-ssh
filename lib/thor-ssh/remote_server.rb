@@ -50,8 +50,6 @@ module ThorSsh
       end
       connection.loop
       
-      # puts "OUTPUT: #{[stdout_data, stderr_data, exit_code, exit_signal].inspect}"
-      
       return stdout_data, stderr_data, exit_code, exit_signal
     end
     
@@ -65,8 +63,6 @@ module ThorSsh
       # Runs the command with the correct sudo's to get it to the current
       # user.  You can also do as_user(nil) do ... to get to the login
       # user.
-      
-      puts command
       
       # A few notes on running commands as a different user
       # 1) we use -i to get it as if you had logged in directly
