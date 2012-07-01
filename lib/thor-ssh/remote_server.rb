@@ -85,7 +85,7 @@ module ThorSsh
       stdout_data, stderr_data, exit_code, exit_signal = run_with_codes(command, options)
       
       # if stderr_data.strip != ''
-      if exit_code != 0
+      if exit_code != 0 && options[:log_stderr] == true
         base.say "#{exit_code}>> #{command}", :red
         base.say stderr_data, :red
       end

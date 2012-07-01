@@ -134,8 +134,9 @@ module ThorSsh
             end
           end
           
-          # Move the file
-          run("mv #{temp_file.inspect} #{path.inspect}")
+          # Copy the text from the source file
+          run("cat #{temp_file.inspect} > #{path.inspect}")
+          run("rm -f #{temp_file.inspect}")
         end
         
         unless base.destination_files.exists?(path)

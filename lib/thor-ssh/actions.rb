@@ -84,14 +84,13 @@ module ThorSsh
       return unless behavior == :invoke
 
       destination = relative_to_original_destination_root(destination_root, false)
-      desc = "#{command} from #{destination.inspect}"
 
       if config[:with]
         desc = "#{File.basename(config[:with].to_s)} #{desc}"
         command = "#{config[:with]} #{command}"
       end
 
-      say_status :run, desc, config.fetch(:verbose, true)
+      say_status :run, command, config.fetch(:verbose, true)
 
       unless options[:pretend]
         # config[:capture] ? `#{command}` : system("#{command}")
